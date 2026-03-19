@@ -24,7 +24,7 @@ def monitor_processes():
 
                 if pid not in seen_pids:
                     seen_pids.add(pid)
-
+                    
                     print(f"[INFO] Process started: {name}")
 
                     if name and name.lower() in SUSPICIOUS_PROCESSES:
