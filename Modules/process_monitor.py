@@ -2,7 +2,6 @@ import psutil
 from modules.logger import log_alert
 import time
 
-# List of suspicious process names
 SUSPICIOUS_PROCESSES = [
     "nmap",
     "netcat",
@@ -24,12 +23,22 @@ def monitor_processes():
 
                 if pid not in seen_pids:
                     seen_pids.add(pid)
-                    
+
                     print(f"[INFO] Process started: {name}")
 
                     if name and name.lower() in SUSPICIOUS_PROCESSES:
                         print(f"[ALERT] Suspicious process detected: {name}")
-                        log_alert("process_monitor", "HIGH", f"Suspicious process: {name}")
+
+                        # 🔥 NEW: Kill process
+                        psutil.Process(pid).terminate()
+
+                        print(f"[ACTION] Process {name} terminated!")
+
+                        log_alert(
+                            "process_monitor",
+                            "HIGH",
+                            f"Suspicious process {name} detected and terminated"
+                        )
 
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 continue
