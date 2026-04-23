@@ -27,7 +27,18 @@ def monitor_processes():
                     print(f"[INFO] Process started: {name}")
 
                     if name and name.lower() in SUSPICIOUS_PROCESSES:
-                        print(f"[ALERT] Suspicious process detected: {name}")
+                        if name and name.lower() in SUSPICIOUS_PROCESSES:
+    print(f"[ALERT] Suspicious process detected: {name}")
+
+    psutil.Process(pid).terminate()
+
+    print(f"[ACTION] Process {name} terminated!")
+
+    log_alert(
+        "process_monitor",
+        "HIGH",
+        f"Suspicious process {name} detected and terminated"
+    )
 
                         # 🔥 NEW: Kill process
                         psutil.Process(pid).terminate()
