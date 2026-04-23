@@ -1,1 +1,6 @@
-{"timestamp": "2026-03-03 12:27:52", "event_type": "file_scan", "severity": "HIGH", "details": "Malware detected in eicar.txt"}
+{
+        "timestamp": "2026-04-23 10:57:54",
+        "type": "process_monitor",
+        "severity": "HIGH",
+        "message": "Suspicious process nmap detected and terminated"
+    }
