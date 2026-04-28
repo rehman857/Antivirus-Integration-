@@ -1,14 +1,6 @@
 import psutil
-from modules.logger import log_alert
 import time
-
-SUSPICIOUS_PROCESSES = [
-    "nmap",
-    "netcat",
-    "hydra",
-    "john",
-    "msfconsole"
-]
+from modules.logger import log_alert
 
 def monitor_processes():
     print("[INFO] Process monitoring started...")
@@ -19,26 +11,39 @@ def monitor_processes():
         for proc in psutil.process_iter(['pid', 'name']):
             try:
                 pid = proc.info['pid']
-                name = proc.info['name']
+                name = proc.info['name'] or ""
 
-                if pid not in seen_pids:
+                try:
+                    cmd = " ".join(proc.cmdline()).lower()
+                except:
+                    cmd = ""
+
+                name_lower = name.lower()
+
+                if "nmap" in name_lower or "nmap" in cmd:
+
+                    if pid in seen_pids:
+                        continue
+
                     seen_pids.add(pid)
 
-                    if name and name.lower() in SUSPICIOUS_PROCESSES:
-                        print(f"[ALERT] Suspicious process detected: {name}")
+                    print(f"[ALERT] Detected: {name} (PID: {pid})")
 
-                        # 🔥 terminate process
-                        psutil.Process(pid).terminate()
+                    try:
+                        proc.terminate()
+                        time.sleep(0.2)
+                        if proc.is_running():
+                            proc.kill()
+                    except:
+                        pass
 
-                        print(f"[ACTION] Process {name} terminated!")
+                    log_alert(
+                        "process_monitor",
+                        "HIGH",
+                        f"Suspicious process {name} detected and terminated"
+                    )
 
-                        log_alert(
-                            "process_monitor",
-                            "HIGH",
-                            f"Suspicious process {name} detected and terminated"
-                        )
-
-            except (psutil.NoSuchProcess, psutil.AccessDenied):
+            except:
                 continue
 
-        time.sleep(2)
+        time.sleep(0.2)
