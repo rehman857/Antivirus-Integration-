@@ -56,3 +56,4 @@ def start_monitoring(path):
         observer.stop()
 
     observer.join()
+
