@@ -21,3 +21,4 @@ def log_alert(event_type, severity, message):
 
     with open(LOG_FILE, "w") as f:
         json.dump(data, f, indent=4)
+                                     
